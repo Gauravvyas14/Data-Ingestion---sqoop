@@ -1,83 +1,43 @@
-/*
- 
+/* 
 / Task 1 :- Import all Table from an existing database in mysql to hdfs.
-
- /
- /
- we will be using sakila database in mysql, and will import it in our 
- 
+/
+/ we will be using sakila database in mysql, and will import it in our 
 / cdh VM
-
-
+/ 
 */
-
-
 
 sqoop import-all-tables --connect jdbc:mysql://192.168.243.1/sakila --username root --password root -m 1
 
-
-
 /* note here we are typing passsword on console , which is not the safe way.
-
 / alternatively we can use argument -P instead of --password, for example 
-
 */
-
-
  
 sqoop import-all-tables --connect jdbc:mysql://192.168.243.1/sakila --username root -P -m 1
 
-
-
 /* this will prompt us to enter password */
-
-
-
-
 
 /* Task 2 :- Import a table from a databse into Hdfs
 */
 
-
-
 sqoop import --connect jdbc:mysql://192.168.243.1/sakila --table country --username root -P --target-dir /sqoopOut/country -m 1
 
 
-
-
-
-
 /* Task 3 :- Import table with query
-
 /
-
-/ we will be importing table film and and will join it by language_id with 
- 
+/ we will be importing table film and and will join it by language_id with  
 / table language's language_id
-
-/ we will use free-form query, and instead of parameter --table, we will use
- 
+/ we will use free-form query, and instead of parameter --table, we will use 
 / parameter --query
-
 / we are using --split-by parameter for slicing our data into multiple 
-
 / parallel tasks
-
 / we will be using $CONDITION parameter to get the benefit of hadoop's 
-
 / parallelaism, this parameter will split our query into multiple chunks
-
 / that will be transferred parallely 
-
 / alternatively we can omit $CONDITION and force sqoop to run one job only 
-
 / with --num mappers 1 parameter, but it will impact performance
-
 */
 
-
-
-sqoop import --connect jdbc:mysql://192.168.243.1/sakila --username root -P --query 'SELECT film_id, language.name, title FROM film JOIN language using (language_id) WHERE $CONDITIONS' --split-by film_id --target-dir /sqoopOut/joined2
+sqoop import --connect jdbc:mysql://192.168.145.1/sakila --username root -P --query 'SELECT film_id, language.name, title FROM film JOIN language using (language_id) WHERE $CONDITIONS' --split-by film_id --target-dir /sqoopOut/joined2
 
 
 
